@@ -1,23 +1,30 @@
 import { useForm } from "react-hook-form";
-import { useMutation } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 import * as apiClient from "../api.client";
+import { Link, useNavigate } from "react-router-dom";
+import { useAppContext } from "../contexts/AppContext";
 export type LoginFormData = {
   email: string;
   password: string;
 };
 
 const Login = () => {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const { showToast } = useAppContext();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<LoginFormData>();
   const mutation = useMutation(apiClient.login, {
-    onSuccess: () => {
-      console.log("user login successfully");
+    onSuccess: async() => {
+      await queryClient.invalidateQueries("validateToken");
+      showToast({ message: "Login successfully", type: "SUCCESS" });
+      navigate("/");
     },
     onError: (error: Error) => {
-      console.log(error.message);
+      showToast({ message: error.message, type: "ERROR" });
     },
   });
 
@@ -26,7 +33,7 @@ const Login = () => {
   });
   return (
     <div>
-      <h2>Login your Account</h2>
+      <h2>Sign In</h2>
       <form className="flex flex-col" onSubmit={onSubmit}>
         <label>
           Email
@@ -50,8 +57,10 @@ const Login = () => {
           ></input>
             {errors.password && <p>{errors.password.message}</p>}
         </label>
-
-        <button type="submit" className="">
+       <span>
+          Not Registered?<Link to="/register" className="underline">Create an account here</Link>
+       </span>
+        <button type="submit" >
           Login
         </button>
       </form>

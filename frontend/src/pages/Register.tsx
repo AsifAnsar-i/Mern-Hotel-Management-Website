@@ -1,6 +1,8 @@
 import { useForm } from "react-hook-form";
 import * as apiClient from "../api.client";
-import { useMutation } from "react-query";
+import { useMutation, useQueryClient } from 'react-query';
+import { useAppContext } from "../contexts/AppContext";
+import { Link, useNavigate } from "react-router-dom";
 export type RegisterFormData = {
   firstName: string;
   lastName: string;
@@ -10,16 +12,25 @@ export type RegisterFormData = {
 };
 
 const Register = () => {
-  const { register, watch, handleSubmit,formState:{errors} } = useForm<RegisterFormData>();
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  const { showToast } = useAppContext();
+  const {
+    register,
+    watch,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<RegisterFormData>();
 
-  const mutation  = useMutation(apiClient.register,{
-    onSuccess:()=>{
-      console.log("User registered successfully");
+  const mutation = useMutation(apiClient.register, {
+    onSuccess: async() => {
+      await queryClient.invalidateQueries("validateToken");
+      showToast({ message: "Register successfully", type: "SUCCESS" });
+      navigate("/");
     },
-    onError:(error:Error)=>{
-      console.log(error.message);
-    }
-     
+    onError: (error: Error) => {
+      showToast({ message: error.message, type: "ERROR" });
+    },
   });
 
   const onSubmit = handleSubmit((data) => {
@@ -43,7 +54,7 @@ const Register = () => {
             className=""
             {...register("lastName", { required: "This field is required" })}
           ></input>
-            {errors.lastName && <p>{errors.lastName.message}</p>}
+          {errors.lastName && <p>{errors.lastName.message}</p>}
         </label>
       </div>
       <label className="">
@@ -84,6 +95,9 @@ const Register = () => {
         ></input>
         {errors.confirmPassword && <p>{errors.confirmPassword.message}</p>}
       </label>
+      <span>
+        Already Registered?<Link to="/login" className="underline">Login here</Link>
+      </span>
       <span>
         <button type="submit">Create Account</button>
       </span>
