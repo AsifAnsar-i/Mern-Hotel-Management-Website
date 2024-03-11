@@ -38,6 +38,7 @@ const Login = () => {
         <label>
           Email
           <input
+           type="email"
             className=""
             {...register("email", { required: "This field is required" })}
           ></input>
@@ -46,6 +47,7 @@ const Login = () => {
         <label>
           Password
           <input
+            type="password"
             className=""
             {...register("password", {
               required: "This field is required",

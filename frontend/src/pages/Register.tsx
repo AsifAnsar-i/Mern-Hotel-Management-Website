@@ -43,6 +43,7 @@ const Register = () => {
         <label className="">
           First Name
           <input
+           type="text"
             className=""
             {...register("firstName", { required: "This field is required" })}
           ></input>
@@ -51,6 +52,7 @@ const Register = () => {
         <label className="">
           Last Name
           <input
+            type="text"
             className=""
             {...register("lastName", { required: "This field is required" })}
           ></input>
@@ -60,6 +62,7 @@ const Register = () => {
       <label className="">
         Email
         <input
+          type="email"
           className=""
           {...register("email", { required: "This field is required" })}
         ></input>
@@ -68,6 +71,7 @@ const Register = () => {
       <label className="">
         Password
         <input
+          type="password"
           className=""
           {...register("password", {
             required: "This field is required",
@@ -82,6 +86,7 @@ const Register = () => {
       <label className="">
         Confirm Password
         <input
+          type="password"
           className=""
           {...register("confirmPassword", {
             validate: (val) => {
