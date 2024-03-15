@@ -52,4 +52,36 @@ router.post("/",verifyToken,[
 })
 
 
+router.get("/",verifyToken,async(req:Request,res:Response)=>{
+    try {
+        const hotels = await Hotel.find({userId:req.userId});
+        res.json(hotels);
+    } catch (error) {
+        console.log("Error fetching hotels: ",error);
+        res.status(500).json({message:"Error fetching hotels"});
+    }
+})
+
+
+router.get("/:id",verifyToken,async(req:Request,res:Response)=>{
+    const id = req.params.id.toString();
+    try {
+        const hotel = await Hotel.findOne(
+            {
+                _id:id,
+                userId:req.userId
+            }
+        );
+        if(!hotel){
+            return res.status(404).json({message:"Hotel not found"});
+        }
+        res.json(hotel);
+    } catch (error) {
+        console.log("Error fetching hotel: ",error);
+        res.status(500).json({message:"Error fetching hotel"});
+    }
+})
+
+
+
 export default router;

@@ -4,6 +4,9 @@ import TypeSection from "./TypeSection";
 import FacilitiesSection from "./FacilitiesSection";
 import GuestsSection from "./GuestsSection";
 import ImagesSection from "./ImagesSection";
+import { HotelType } from "../../../../backend/src/models/hotel";
+import { useEffect } from "react";
+import Spinner from "./Spinner";
 
 export type HotelFormData = {
   name: string;
@@ -20,13 +23,19 @@ export type HotelFormData = {
 };
 
 type Props = {
-    onSave:(hotelFormData:FormData)=>void;
-    isLoading:boolean;
+  hotel: HotelType;
+  onSave: (hotelFormData: FormData) => void;
+  isLoading: boolean;
 };
 
-const ManageHotelForm = ({isLoading,onSave}:Props) => {
+const ManageHotelForm = ({ isLoading, onSave, hotel }: Props) => {
   const formMethods = useForm<HotelFormData>();
-  const { handleSubmit } = formMethods;
+  const { handleSubmit, reset } = formMethods;
+
+  useEffect(() => {
+    reset(hotel);
+  }, [hotel, reset]);
+
   const onSubmit = handleSubmit((formDataJson: HotelFormData) => {
     const formData = new FormData();
     formData.append("name", formDataJson.name);
@@ -58,8 +67,10 @@ const ManageHotelForm = ({isLoading,onSave}:Props) => {
         <span className="flex justify-center">
           <button
             disabled={isLoading}
-          type="submit" className="p-3 bg-blue-500 rounded-lg disabled:bg-slate-600">
-           {isLoading ? "Saving..." : "Save"}
+            type="submit"
+            className="p-3 bg-blue-500 rounded-lg disabled:bg-slate-600"
+          >
+            {isLoading ? <Spinner /> : "Save"}
           </button>
         </span>
       </form>
