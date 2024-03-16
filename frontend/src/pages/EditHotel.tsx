@@ -10,7 +10,8 @@ const EditHotel = () => {
     {
       enabled: !!hotelId,
     }
-  );
+    //props.match.params.id
+  );    
   return <ManageHotelForm hotel={hotel} />;
 };
 
